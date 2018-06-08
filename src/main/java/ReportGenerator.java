@@ -13,14 +13,14 @@ class ReportGenerator
         try{
             // Open the file that is the first
             // command line parameter
-            FileInputStream fstream = new FileInputStream("/home/tharindu/WSO2_Telco_Projects/Telco_Support/MS/MSRBGW/fail-notify.log/logDebuger");
+            FileInputStream fstream = new FileInputStream(args[0]);
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String strLine,payload[],response1[],response2[];
             JSONObject response,subresponse;
-            Path file = Paths.get("robi-das-report.csv");
-            PrintWriter writer = new PrintWriter("robi-das-reports.csv", "UTF-8");
+            Path file = Paths.get(args[1]);
+            PrintWriter writer = new PrintWriter(args[1], "UTF-8");
             writer.println("Api,Date,Service Time,Provider,Api Publisher,Application,Response Code,MSISDN,Operation/Event,Total Amount Charged/Refunded,On Behalf Of,Purchase Category,Tax Amount,Channel,Amount,Currency,Description,Server Reference Code,Client Correlator,Transaction Operation Status,Reference Code,Resource URL");
 
 
