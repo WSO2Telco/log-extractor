@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/logDebuger_jar</output-path>
     <root id="archive" name="logDebuger.jar">
       <element id="module-output" name="logDebuger" />
-      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/json/json/20140107/json-20140107.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Maven: org.json:json:20180130" />
     </root>
   </artifact>
 </component>
