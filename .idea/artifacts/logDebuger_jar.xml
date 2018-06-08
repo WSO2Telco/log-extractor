@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="logDebuger:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/logDebuger_jar</output-path>
-    <root id="archive" name="logDebuger.jar">
-      <element id="module-output" name="logDebuger" />
-      <element id="library" level="project" name="Maven: org.json:json:20180130" />
-    </root>
-  </artifact>
-</component>
