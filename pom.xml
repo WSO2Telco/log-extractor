@@ -15,14 +15,14 @@
         </dependency>
     </dependencies>
     <!--<dependencyManagement>-->
-        <!--<dependencies>-->
-            <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.json/json &ndash;&gt;-->
-            <!--<dependency>-->
-                <!--<groupId>org.json</groupId>-->
-                <!--<artifactId>json</artifactId>-->
-                <!--<version>20180130</version>-->
-            <!--</dependency>-->
-        <!--</dependencies>-->
+    <!--<dependencies>-->
+    <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.json/json &ndash;&gt;-->
+    <!--<dependency>-->
+    <!--<groupId>org.json</groupId>-->
+    <!--<artifactId>json</artifactId>-->
+    <!--<version>20180130</version>-->
+    <!--</dependency>-->
+    <!--</dependencies>-->
     <!--</dependencyManagement>-->
     <build>
         <plugins>
@@ -80,6 +80,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <finalName>${artifactId}-${version}</finalName>
                     <archive>
                         <manifest>
                             <mainClass>ReportGenerator</mainClass>
@@ -88,6 +89,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
             </plugin>
         </plugins>
