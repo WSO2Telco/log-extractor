@@ -6,7 +6,7 @@
 
     <groupId>com.wso2telco.logdebugger.com</groupId>
     <artifactId>com.wso2telco.logdebugger.com</artifactId>
-    <version>1.0</version>
+    <version>1.0-SNAPSHOT</version>
     <dependencies>
         <dependency>
             <groupId>org.json</groupId>
