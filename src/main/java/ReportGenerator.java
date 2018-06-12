@@ -27,10 +27,11 @@ class ReportGenerator
             PrintWriter paymentReport = new PrintWriter(args[1], "UTF-8");
             PrintWriter smsReport = new PrintWriter(args[2], "UTF-8");
             PrintWriter apiSummery = new PrintWriter(args[3], "UTF-8");
+            PrintWriter errorResponse = new PrintWriter("errorResponse.log", "UTF-8");
             Map<String, MutableInt> apiCount = new HashMap<String, MutableInt>();
             Iterator apiIterator;
-            paymentReport.println("Api,Date,Service Time,Provider,Api Publisher,Application,Response Code,MSISDN,Operation/Event,Total Amount Charged/Refunded,On Behalf Of,Purchase Category,Tax Amount,Channel,Amount,Currency,Description,Server Reference Code,Client Correlator,Transaction Operation Status,Reference Code,Resource URL");
-            smsReport.println("Api,Resource Path,Response Time,Service Time,Provider,Api Publisher,Application,Reference Code,MSISDN,Operation/Event,Client Correlator,Sender,Destination,status,Message,count,Message Id,Filter Criteria");
+            paymentReport.println("Api,Date,Service Time,Provider,Api Publisher,Application,Response Code,MSISDN,Operation/Event,Total Amount Charged/Refunded,On Behalf Of,Purchase Category,Tax Amount,Channel,Amount,Currency,Description,Server Reference Code,Client Correlator,Transaction Operation Status,Reference Code,Resource URL,Error Response");
+            smsReport.println("Api,Resource Path,Response Time,Service Time,Provider,Api Publisher,Application,Reference Code,MSISDN,Operation/Event,Client Correlator,Sender,Destination,status,Message,count,Message Id,Filter Criteria,Error Response");
             apiSummery.println("Api,Couunt");
 /*
 payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /outbound/tel%3A%2B2128304/requests, POST, v1, 1528395284239, 21, VUMobile@carbon.super, , mife-gateway.robi.com.bd, admin, BDTube, , 1, 201, , north-bound, {"outboundSMSMessageRequest":{"address":["tel::+8801646095543"],"deliveryInfoList":{"deliveryInfo":[{"address":"tel:+8801646095543","deliveryStatus":"MessageWaiting"}],"resourceURL":"https://api.robi.com.bd/smsmessaging/v1/outbound/tel%3A%2B2128304/requests/1528395284224SM113026503923/deliveryInfos"},"senderAddress":"tel:2128304","outboundSMSTextMessage":{"message":"Subscribed on BDTube@TK2.44/day(AutoRenew).Data charge applicable.To unsubscribe visit http://bdtube.mobi or type STOP & send SMS to 2128304. Help:01674985965"},"clientCorrelator":"201806080016465000946dc57dc10cab4a5d9edda81bbbd4c15f","receiptRequest":{"notifyURL":"","callbackData":""},"senderName":"","resourceURL":"https://api.robi.com.bd/smsmessaging/v1/outbound/tel%3A%2B2128304/requests/1528395284224SM113026503923"}}, 14, VUMobile, 9cueliEeoMxkfegVFbDLw2wPiLMa, ROBI, 1, 3, , 113],
@@ -45,7 +46,11 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                 if (strLine.contains("payloadData")) {
                     payload = strLine.split(",");
                     response1 = strLine.split("north-bound,");
-                    response2 = response1[1].split("}},");
+                    if(payload[3].equals(" adms")){
+                        response2 = response1[1].split("]}},");
+                    }else{
+                        response2 = response1[1].split("}},");
+                    }
                     MutableInt count = apiCount.get(payload[3].replaceAll("\\s+", ""));
                     if (count == null) {
                         apiCount.put(payload[3].replaceAll("\\s+", ""), new MutableInt());
@@ -54,7 +59,12 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                         count.increment();
                     }
                     try {
-                        response = new JSONObject(response2[0] + "}}");
+                        if(payload[3].equals(" adms")){
+                            response = new JSONObject(response2[0] + "]}}");
+                        }else{
+                            response = new JSONObject(response2[0] + "}}");
+                        }
+
                     } catch (Exception e) {
                         if (payload[3].equals(" payment")) {
                             paymentReport.println(payload[3].replaceAll("\\s+", "") + ',' //API
@@ -78,6 +88,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                                     + ','
                                     + ','
                                     + ','
+                                    + "400 Bad Request" +','
                             );
                         } else if (payload[3].equals(" smsmessaging")) {
                             smsReport.println(payload[3].replaceAll("\\s+", "") + ',' //API
@@ -98,6 +109,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                                     + ','
                                     + ','
                                     + ','
+                                    + "400 Bad Request" +','
                             );
                         }
 
@@ -107,8 +119,29 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                         try {
                             response.getJSONObject("amountTransaction");
                         } catch (Exception e) {
-                            //System.out.println(payload[3] + "--" + response2[0]);
-                            errorCount++;
+                            paymentReport.println(payload[3].replaceAll("\\s+", "") + ',' //API
+                                    + (Date) new Timestamp(Long.parseLong(payload[7].replaceAll("\\s+", ""))) //Date
+                                    + ",1970 01 01 06:00:00,"
+                                    + payload[9].replaceAll("\\s+", "") + ','
+                                    + payload[12].replaceAll("\\s+", "") + ','
+                                    + payload[13].replaceAll("\\s+", "") + ','
+                                    + payload[16].replaceAll("\\s+", "") + ','
+                                    + payload[4].split("/")[1].replaceAll("%3A%2B", ":+") + ','
+                                    + "Charge" + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + "\"" + response2[0] + "}}\"" +','
+                            );
                             continue;
                         }
                         paymentReport.println(payload[3].replaceAll("\\s+", "") + ',' //API
@@ -139,7 +172,26 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                         try {
                             response.getJSONObject("outboundSMSMessageRequest");
                         } catch (Exception e) {
-                            errorCount++;
+                            smsReport.println(payload[3].replaceAll("\\s+", "") + ',' //API
+                                    + payload[4].replaceAll("\\s+", "") + ',' //Resource Path
+                                    + (Date) new Timestamp(Long.parseLong(payload[7].replaceAll("\\s+", ""))) //Date
+                                    + ",1970 01 01 06:00:00,"
+                                    + payload[9].replaceAll("\\s+", "") + ',' //Provider
+                                    + payload[12].replaceAll("\\s+", "") + ',' //Publisher
+                                    + payload[13].replaceAll("\\s+", "") + ',' //Application
+                                    + "null" + ','
+                                    + payload[4].split("/")[2].replaceAll("%3A%2B", ":") + ','
+                                    + "sendSMS" + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + ','
+                                    + "\"" + response2[0] + "}}\"" +','
+                            );
                             continue;
                         }
                         smsReport.println(payload[3].replaceAll("\\s+", "") + ',' //API
@@ -170,6 +222,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
             in.close();
             paymentReport.close();
             smsReport.close();
+            errorResponse.close();
 
             apiIterator= apiCount.entrySet().iterator();
             MutableInt tmp;
