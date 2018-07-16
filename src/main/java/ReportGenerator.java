@@ -18,32 +18,35 @@ class ReportGenerator
         try{
             // Open the file that is the first
             // command line parameter
-            int errorCount = 0;
-            FileInputStream fstream = new FileInputStream(args[0]);
+            FileInputStream fstream = new FileInputStream(args[1]);
             // Get the object of DataInputStream
             DataInputStream in = new DataInputStream(fstream);
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             //Path file1 = Paths.get(args[1]);
             //Path file2 = Paths.get(args[2]);
             try{
-                fileName=args[1];
+                fileName=args[2];
             }catch (Exception e){
                 fileName="";
             }
-            PrintWriter paymentReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-payment-report.csv", "UTF-8");
-            PrintWriter paymentErrorReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-payment-report-errorReport.csv", "UTF-8");
-            PrintWriter smsReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-sms-report.csv", "UTF-8");
-            PrintWriter smsErrorReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-sms-report-errorReport.csv", "UTF-8");
-            PrintWriter admsReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-adms-report.csv", "UTF-8");
-            PrintWriter lmsReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-LMS-report.csv", "UTF-8");
-            PrintWriter xrbtReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-xrbt-report.csv", "UTF-8");
-            PrintWriter bioReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-bio-report.csv", "UTF-8");
-            PrintWriter adcsReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-ADCS-report.csv", "UTF-8");
-            PrintWriter ocsReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-ocs-report.csv", "UTF-8");
-            PrintWriter ebalReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-OCS-report.csv", "UTF-8");
-            PrintWriter sdpReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-sdp-report.csv", "UTF-8");
-            PrintWriter fnfReport = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-fnf-report.csv", "UTF-8");
-            PrintWriter apiSummery = new PrintWriter(fileName + args[0].split("\\.log\\.")[1] + "-robi-api-count-report.csv", "UTF-8");
+            long offset = 60000L * 60L * (long)(Float.parseFloat(args[0])*2) / 2L;
+
+            PrintWriter paymentReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-payment.csv", "UTF-8");
+            PrintWriter paymentErrorReport = new PrintWriter(fileName + "payment-errorReport.csv", "UTF-8");
+            PrintWriter smsReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-sms.csv", "UTF-8");
+            PrintWriter smsErrorReport = new PrintWriter(fileName  + "sms-errorReport.csv", "UTF-8");
+            PrintWriter admsReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-adms.csv", "UTF-8");
+            PrintWriter lmsReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-LMS.csv", "UTF-8");
+            PrintWriter xrbtReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-xrbt.csv", "UTF-8");
+            PrintWriter bioReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-bio.csv", "UTF-8");
+            PrintWriter adcsReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-ADCS.csv", "UTF-8");
+            PrintWriter ocsReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-ocs.csv", "UTF-8");
+            PrintWriter ebalReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-ebal.csv", "UTF-8");
+            PrintWriter sdpReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-sdp.csv", "UTF-8");
+            PrintWriter fnfReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-fnf.csv", "UTF-8");
+            PrintWriter cbsReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-cbs.csv", "UTF-8");
+            PrintWriter mMoneyReport = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-MMoney.csv", "UTF-8");
+            PrintWriter apiSummery = new PrintWriter(fileName + args[1].split("\\.log\\.")[1] + "-robi-api-count.csv", "UTF-8");
 
             Map<String, MutableInt> apiCount = new HashMap<String, MutableInt>();
             Iterator apiIterator;
@@ -64,13 +67,14 @@ class ReportGenerator
             ebalReport.println("API,MSISDN,Date Time,Service Provider,Application Name,Response Code");
             sdpReport.println("API,MSISDN,Date Time,Service Provider,Application Name,Response Code");
             fnfReport.println("API,MSISDN,Date Time,Service Provider,Application Name,Response Code");
+            cbsReport.println("API,MSISDN,Date Time,Service Provider,Application Name,Response Code");
+            mMoneyReport.println("API,MSISDN,Date Time,Service Provider,Application Name,Response Code");
             apiSummery.println("Api,Couunt");
 /*
 payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /outbound/tel%3A%2B2128304/requests, POST, v1, 1528395284239, 21, VUMobile@carbon.super, , mife-gateway.robi.com.bd, admin, BDTube, , 1, 201, , north-bound, {"outboundSMSMessageRequest":{"address":["tel::+8801646095543"],"deliveryInfoList":{"deliveryInfo":[{"address":"tel:+8801646095543","deliveryStatus":"MessageWaiting"}],"resourceURL":"https://api.robi.com.bd/smsmessaging/v1/outbound/tel%3A%2B2128304/requests/1528395284224SM113026503923/deliveryInfos"},"senderAddress":"tel:2128304","outboundSMSTextMessage":{"message":"Subscribed on BDTube@TK2.44/day(AutoRenew).Data charge applicable.To unsubscribe visit http://bdtube.mobi or type STOP & send SMS to 2128304. Help:01674985965"},"clientCorrelator":"201806080016465000946dc57dc10cab4a5d9edda81bbbd4c15f","receiptRequest":{"notifyURL":"","callbackData":""},"senderName":"","resourceURL":"https://api.robi.com.bd/smsmessaging/v1/outbound/tel%3A%2B2128304/requests/1528395284224SM113026503923"}}, 14, VUMobile, 9cueliEeoMxkfegVFbDLw2wPiLMa, ROBI, 1, 3, , 113],
 
  */
-
-
+            
             //Read File Line By Line
             while ((strLine = br.readLine()) != null)   {
                 // Print the content on the console
@@ -88,7 +92,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             try{
                                 admsReport.println(payload[3] + ',' //API
                                         + payload[4].split("=")[1].split("&")[0] + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -96,7 +100,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 admsReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -104,10 +108,9 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }
                         }else if(payload[3].equals("LMS")){
                             try{
-
                                 lmsReport.println(payload[3] + ',' //API
                                         + payload[4].split("=")[1].split("&")[0] + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -115,7 +118,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 lmsReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -125,7 +128,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             try{
                                 xrbtReport.println(payload[3] + ',' //API
                                         + payload[4].split("=")[1].split("&")[0] + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -133,7 +136,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 xrbtReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -143,7 +146,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             try{
                                 bioReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -151,7 +154,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 bioReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date +
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -169,7 +172,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 adcsReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -179,7 +182,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             try{
                                 ocsReport.println(payload[3] + ',' //API
                                         + payload[4].split("=")[1].split("&")[0] + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -187,7 +190,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 ocsReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -197,7 +200,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             try{
                                 ebalReport.println(payload[3] + ',' //API
                                         + payload[4].split("=")[1].split("&")[0] + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -205,7 +208,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 ebalReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -215,7 +218,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             try{
                                 sdpReport.println(payload[3] + ',' //API
                                         + payload[4].split("=")[1].split("&")[0] + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -223,7 +226,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 sdpReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset ) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -233,7 +236,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             try{
                                 fnfReport.println(payload[3] + ',' //API
                                         + payload[4].split("=")[1].split("&")[0] + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -241,7 +244,43 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             }catch (Exception e){
                                 fnfReport.println(payload[3] + ',' //API
                                         + ','
-                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
+                                        + payload[9] + ',' //Provider
+                                        + payload[13] + ',' //Application
+                                        + payload[16]
+                                );
+                            }
+                        }else if(payload[3].equals("cbs")){
+                            try{
+                                cbsReport.println(payload[3] + ',' //API
+                                        + payload[4].split("=")[1].split("&")[0] + ','
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
+                                        + payload[9] + ',' //Provider
+                                        + payload[13] + ',' //Application
+                                        + payload[16]
+                                );
+                            }catch (Exception e){
+                                cbsReport.println(payload[3] + ',' //API
+                                        + ','
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
+                                        + payload[9] + ',' //Provider
+                                        + payload[13] + ',' //Application
+                                        + payload[16]
+                                );
+                            }
+                        }else if(payload[3].equals("MMoney")){
+                            try{
+                                mMoneyReport.println(payload[3] + ',' //API
+                                        + payload[4].split("=")[1].split("&")[0] + ','
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
+                                        + payload[9] + ',' //Provider
+                                        + payload[13] + ',' //Application
+                                        + payload[16]
+                                );
+                            }catch (Exception e){
+                                mMoneyReport.println(payload[3] + ',' //API
+                                        + ','
+                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
                                         + payload[9] + ',' //Provider
                                         + payload[13] + ',' //Application
                                         + payload[16]
@@ -252,7 +291,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                     } catch (Exception e) {
                         if (payload[3].equals("payment")) {
                             paymentErrorReport.println(payload[3] + ',' //API
-                                    + (Date) new Timestamp(Long.parseLong(payload[7])) //Date
+                                    + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) //Date
                                     + ",1970 01 01 06:00:00,"
                                     + payload[9] + ','
                                     + payload[12] + ','
@@ -272,12 +311,12 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                                     + ','
                                     + ','
                                     + ','
-                                    + "400 Bad Request" +','
+                                    + payload[19]+", "+payload[20] +','
                             );
                         } else if (payload[3].equals("smsmessaging")) {
                             smsErrorReport.println(payload[3] + ',' //API
                                     + payload[4] + ',' //Resource Path
-                                    + (Date) new Timestamp(Long.parseLong(payload[7])) //Date
+                                    + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) //Date
                                     + ",1970 01 01 06:00:00,"
                                     + payload[9] + ',' //Provider
                                     + payload[12] + ',' //Publisher
@@ -293,13 +332,13 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                                     + ','
                                     + ','
                                     + ','
-                                    + "400 Bad Request" +','
+                                    + payload[19]+", "+payload[20] +','
                             );
                         }
 //                        else if(payload[3].equals("adms")){
 //                            admsErrorReport.println(payload[3] + ',' //API
 //                                    + payload[4].split("=")[1].split("&")[0] + ','
-//                                    + (Date) new Timestamp(Long.parseLong(payload[7])) //Date
+//                                    + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) //Date
 //                                    + payload[9] + ',' //Provider
 //                                    + payload[13] + ',' //Application
 //                                    + payload[16]
@@ -308,7 +347,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 ////                            System.out.println(strLine);
 //                            lmsErrorReport.println(payload[3] + ',' //API
 //                                    + payload[4].split("=")[1].split("&")[0] + ','
-//                                    + (Date) new Timestamp(Long.parseLong(payload[7]))  + ','//Date
+//                                    + (Date) new Timestamp(Long.parseLong(payload[7])+ offset)  + ','//Date
 //                                    + payload[9] + ',' //Provider
 //                                    + payload[13] + ',' //Application
 //                                    + payload[16]
@@ -316,7 +355,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                        }else if(payload[3].equals("xrbt")){
 //                            xrbtErrorReport.println(payload[3] + ',' //API
 //                                    + payload[4].split("=")[1].split("&")[0] + ','
-//                                    + (Date) new Timestamp(Long.parseLong(payload[7]))  + ','//Date
+//                                    + (Date) new Timestamp(Long.parseLong(payload[7])+ offset)  + ','//Date
 //                                    + payload[9] + ',' //Provider
 //                                    + payload[13] + ',' //Application
 //                                    + payload[16]
@@ -327,7 +366,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                            }catch (Exception ex){
 //                                bioErrorReport.println(payload[3] + ',' //API
 //                                        + payload[4].split("=")[1].split("&")[0] + ','
-//                                        + (Date) new Timestamp(Long.parseLong(payload[7]))  + ','//Date
+//                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset)  + ','//Date
 //                                        + payload[9] + ',' //Provider
 //                                        + payload[13] + ',' //Application
 //                                        + payload[16]
@@ -339,7 +378,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                            } catch (Exception ex) {
 //                                bioErrorReport.println(payload[3] + ',' //API
 //                                        + payload[4].split("=")[1].split("&")[0] + ','
-//                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+//                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
 //                                        + payload[9] + ',' //Provider
 //                                        + payload[13] + ',' //Application
 //                                        + payload[16]
@@ -349,7 +388,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                            try{
 //                                bioReport.println(payload[3] + ',' //API
 //                                        + ','
-//                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+//                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
 //                                        + payload[9] + ',' //Provider
 //                                        + payload[13] + ',' //Application
 //                                        + payload[16]
@@ -357,7 +396,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                            }catch (Exception ex){
 //                                bioReport.println(payload[3] + ',' //API
 //                                        + ','
-//                                        + (Date) new Timestamp(Long.parseLong(payload[7])) + ',' //Date
+//                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) + ',' //Date
 //                                        + payload[9] + ',' //Provider
 //                                        + payload[13] + ',' //Application
 //                                        + payload[16]
@@ -369,7 +408,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                            try{
 //                                adcsErrorReport.println(payload[3] + ',' //API
 //                                        + payload[4].split("=")[1].split("&")[0] + ','
-//                                        + (Date) new Timestamp(Long.parseLong(payload[7]))  + ','//Date
+//                                        + (Date) new Timestamp(Long.parseLong(payload[7])+ offset)  + ','//Date
 //                                        + payload[9] + ',' //Provider
 //                                        + payload[13] + ',' //Application
 //                                        + payload[16]
@@ -378,7 +417,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                                if(Integer.parseInt(payload[16]) < 227 && Integer.parseInt(payload[16]) >= 200)
 //                                    adcsReport.println(payload[3] + ',' //API
 //                                            +  ','
-//                                            + (Date) new Timestamp(Long.parseLong(payload[7]))  + ','//Date
+//                                            + (Date) new Timestamp(Long.parseLong(payload[7])+ offset)  + ','//Date
 //                                            + payload[9] + ',' //Provider
 //                                            + payload[13] + ',' //Application
 //                                            + payload[16]
@@ -386,7 +425,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
 //                                else
 //                                    adcsErrorReport.println(payload[3] + ',' //API
 //                                            +  ','
-//                                            + (Date) new Timestamp(Long.parseLong(payload[7]))  + ','//Date
+//                                            + (Date) new Timestamp(Long.parseLong(payload[7])+ offset)  + ','//Date
 //                                            + payload[9] + ',' //Provider
 //                                            + payload[13] + ',' //Application
 //                                            + payload[16]
@@ -401,7 +440,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                             response.getJSONObject("amountTransaction");
                         } catch (Exception e) {
                             paymentErrorReport.println(payload[3] + ',' //API
-                                    + (Date) new Timestamp(Long.parseLong(payload[7])) //Date
+                                    + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) //Date
                                     + ",1970 01 01 06:00:00,"
                                     + payload[9] + ','
                                     + payload[12] + ','
@@ -428,7 +467,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                         //2,4,6,8,15,17,20
                         if (validateJSON(response.getJSONObject("amountTransaction"), "transactionOperationStatus").equals("Charged")){
                             paymet++;
-                            paymentReport.println((Date) new Timestamp(Long.parseLong(payload[7])) //Date
+                            paymentReport.println((Date) new Timestamp(Long.parseLong(payload[7])+ offset) //Date
                                     + payload[9] + ','
                                     + payload[13] + ','
                                     + payload[4].split("/")[1].replaceAll("%3A%2B", ":+") + ','
@@ -444,7 +483,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                         } catch (Exception e) {
                             smsErrorReport.println(payload[3] + ',' //API
                                     + payload[4] + ',' //Resource Path
-                                    + (Date) new Timestamp(Long.parseLong(payload[7])) //Date
+                                    + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) //Date
                                     + ",1970 01 01 06:00:00,"
                                     + payload[9] + ',' //Provider
                                     + payload[12] + ',' //Publisher
@@ -466,7 +505,7 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
                         }
                         smsReport.println(payload[3] + ',' //API
                                 + payload[4] + ',' //Resource Path
-                                + (Date) new Timestamp(Long.parseLong(payload[7])) //Date
+                                + (Date) new Timestamp(Long.parseLong(payload[7])+ offset) //Date
                                 + ",1970 01 01 06:00:00,"
                                 + payload[9] + ',' //Provider
                                 + payload[12] + ',' //Publisher
@@ -504,6 +543,8 @@ payloadData=[9cueliEeoMxkfegVFbDLw2wPiLMa, /smsmessaging/v1, v1, smsmessaging, /
             sdpReport.close();
             fnfReport.close();
             adcsReport.close();
+            cbsReport.close();
+            mMoneyReport.close();
 
             apiIterator= apiCount.entrySet().iterator();
             MutableInt tmp;
