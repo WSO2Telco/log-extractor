@@ -108,7 +108,7 @@ public class ReportFactory  {
     }
 
     public void generateReports(String strLine, long offset){
-        String[] payload = strLine.split(", ");
+        String[] payload = strLine.split(", (?![^{]*})");
         StringBuilder record;
 
         MutableInt count = apiCount.get(payload[3]);
