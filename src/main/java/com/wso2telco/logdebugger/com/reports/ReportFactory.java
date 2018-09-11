@@ -40,7 +40,7 @@ public class ReportFactory  {
         }
         try{
             StringBuilder fileName = new StringBuilder();
-            this.adcs = new ADCS(fileName.append(fileLoc).append(args[1].split("\\.log\\.")[1]).append("-robi-com.wso2telco.logdebugger.com.reports.ADCS.csv").toString());
+            this.adcs = new ADCS(fileName.append(fileLoc).append(args[1].split("\\.log\\.")[1]).append("-robi-ADCS.csv").toString());
             fileName = new StringBuilder();
             this.adms = new ADMS(fileName.append(fileLoc).append(args[1].split("\\.log\\.")[1]).append("-robi-adms.csv").toString());
             fileName = new StringBuilder();
@@ -52,7 +52,7 @@ public class ReportFactory  {
             fileName = new StringBuilder();
             this.fnf = new FNF(fileName.append(fileLoc).append(args[1].split("\\.log\\.")[1]).append("-robi-fnf.csv").toString());
             fileName = new StringBuilder();
-            this.lms = new LMS(fileName.append(fileLoc).append(args[1].split("\\.log\\.")[1]).append("-robi-com.wso2telco.logdebugger.com.reports.LMS.csv").toString());
+            this.lms = new LMS(fileName.append(fileLoc).append(args[1].split("\\.log\\.")[1]).append("-robi-LMS.csv").toString());
             fileName = new StringBuilder();
             this.mMoney = new MMoney(fileName.append(fileLoc).append(args[1].split("\\.log\\.")[1]).append("-robi-mMoney.csv").toString());
             fileName = new StringBuilder();
@@ -133,7 +133,7 @@ public class ReportFactory  {
                 smsError.writeToReport(record, smsError.getReport());
             else
                 sms.writeToReport(record, sms.getReport());
-        } else if (payload[3].equals("com.wso2telco.logdebugger.com.reports.ADCS")) {
+        } else if (payload[3].equals("ADCS")) {
             ADCSRecord adcsRecord = new ADCSRecord();
             record = adcsRecord.setPayload(payload, offset);
             adcs.writeToReport(record, adcs.getReport());
@@ -157,11 +157,11 @@ public class ReportFactory  {
             FNFRecord fnfRecord = new FNFRecord();
             record = fnfRecord.setPayload(payload, offset);
             fnf.writeToReport(record, fnf.getReport());
-        } else if (payload[3].equals("com.wso2telco.logdebugger.com.reports.LMS")){
+        } else if (payload[3].equals("LMS")){
             LMSRecord lmsRecord = new LMSRecord();
             record = lmsRecord.setPayload(payload, offset);
             lms.writeToReport(record,lms.getReport());
-        } else if (payload[3].equals("com.wso2telco.logdebugger.com.reports.MMoney")){
+        } else if (payload[3].equals("MMoney")){
             MMoneyRecord mMoneyRecord = new MMoneyRecord();
             record = mMoneyRecord.setPayload(payload, offset);
             mMoney.writeToReport(record, mMoney.getReport());
