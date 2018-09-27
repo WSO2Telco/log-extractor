@@ -76,8 +76,8 @@ public class PaymentRecord extends GeneralRecord {
             record.append((Date) new Timestamp(Long.parseLong(payload[7])+ offset)).append(",");
             record.append(payload[9]).append(",");
             record.append(payload[13]).append(",");
-            record.append(payload[16]).append(",");
-            record.append(payload[4].split("/")[2].replaceAll("%3A%2B", ":+")).append(",");
+            //record.append(payload[16]).append(",");
+            record.append(payload[4].split("/")[1].replaceAll("%3A%2B", ":+")).append(",");
             record.append(validateJSON(response.getJSONObject("amountTransaction").getJSONObject("paymentAmount").getJSONObject("chargingInformation"), "amount")).append(",");
             record.append(validateJSON(response.getJSONObject("amountTransaction").getJSONObject("paymentAmount").getJSONObject("chargingInformation"), "description")).append(",");
             record.append(validateJSON(response.getJSONObject("amountTransaction"), "transactionOperationStatus")).append(",");
